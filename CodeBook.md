@@ -1,6 +1,6 @@
 ## Description
 
-run_analysis.R is an R script that collects and cleans data collected from the accelerometes from a Samsung Galaxy S smartphone. A description of the process is outline below
+run_analysis.R is an R script that collects and cleans data collected from the accelerometes from a Samsung Galaxy S smartphone. A description of the process is outline below:
 
 * Script checks for the existance of the "UCI HAR Dataset" directory.
 * The data from the "test/X_test.txt" and "train/X_train.txt" files in the "UCI HAR Dataset" directory are collected and merged together.
