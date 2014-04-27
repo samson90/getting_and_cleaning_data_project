@@ -27,6 +27,10 @@ if (file.exists(data_folder)){
     train_activity <- scan(train_activity_file, integer())
     total_activity <- c(train_activity, test_activity)
     mean_std_data["Activity"] <- total_activity
+    mean_std_data$Activity <- factor(mean_std_data$Activity, labels=
+                                         c("WALKING", "WALKING_UPSTAIRS", 
+                                           "WALKING_DOWNSTAIRS", "SITTING", 
+                                           "STANDING", "LAYING"))
     
     ## add the subject to the dataset
     test_subject_file <- "UCI HAR Dataset/test/subject_test.txt"
@@ -36,22 +40,27 @@ if (file.exists(data_folder)){
     total_subject <- c(train_subject, test_subject)
     mean_std_data["Subject"] <- total_subject
 
+    ## create the tidy data set
     tidy_data <- NULL
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 1,][1:num_measurements]))
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 2,][1:num_measurements]))
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 3,][1:num_measurements]))
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 4,][1:num_measurements]))
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 5,][1:num_measurements]))
-    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 6,][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'WALKING',][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'WALKING_UPSTAIRS',][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'WALKING_DOWNSTAIRS',][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'SITTING',][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'STANDING',][1:num_measurements]))
+    tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Activity == 'LAYING',][1:num_measurements]))
     for (i in 1:30){
         tidy_data <- rbind(tidy_data, colMeans(mean_std_data[mean_std_data$Subject == i,][1:num_measurements]))
     }
+    
+    ## add column and row names
     colnames(tidy_data) <- colnames(mean_std_data[1:num_measurements])
-    
-    print(ncol(tidy_data))
-    print(nrow(tidy_data))
-    print(rownames(tidy_data))
-    
+    rownames <- levels(mean_std_data$Activity)
+    for (i in 7:36){
+        rownames <- c(rownames, sprintf("Subject%d", (i-6)))
+    }
+    rownames(tidy_data) <- rownames
+
+    ## output the tidy data set to a .txt file.
     write.table(tidy_data, "tidy_data.txt")
     
 } else{
